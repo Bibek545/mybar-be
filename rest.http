@@ -1,0 +1,84 @@
+@rootUrl = http://localhost:8020
+
+###check if the server is live
+GET {{rootUrl}}
+
+###creating a new user
+POST {{rootUrl}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+    "fName": "bibek",
+    "lName": "malla",
+    "email": "bbekhamal26@gmail.com",
+    "phone":"1234",
+    "password": "Bibek@9",
+    "role": "customer"
+}
+
+###activating a user
+POST {{rootUrl}}/api/v1/auth/activate-user
+Content-Type: application/json
+
+{
+
+    "sessionId": "687ae956ac959ba506356ff6",
+    "t": "c0438c30-3cd4-450f-abe2-0f2e391b2136"
+}
+
+###login the user
+POST {{rootUrl}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email":"bbekhamal26@gmail.com",
+    "password":"Bibek@9"
+}
+
+###get the user profile
+GET {{rootUrl}}/api/v1/user/profile 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NTYwMjAxOSwiZXhwIjoxNzU1NjAyOTE5fQ.N1bmPZZ-GJkyZgi0L7bT4qouzOj1rhEURTjppXnDmmY
+
+
+###WE WILL RENEW THE JWT HERE 
+GET {{rootUrl}}/api/v1/auth/renew-jwt
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NTYwMTE1MiwiZXhwIjoxNzU4MTkzMTUyfQ.hpLDE2sNSuifgTj4jGP_Z2Dslt-eQU9_BTiH3Q6sn-Y
+
+###logging out the user
+GET {{rootUrl}}/api/v1/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NTYwMjAxOSwiZXhwIjoxNzU1NjAyOTE5fQ.N1bmPZZ-GJkyZgi0L7bT4qouzOj1rhEURTjppXnDmmY
+
+
+###generating the otp
+POST {{rootUrl}}/api/v1/auth/otp 
+Content-Type: application/json
+
+{
+    "email": "bbekhamal26@gmail.com"
+}
+
+###reset password
+POST {{rootUrl}}/api/v1/auth/reset-password
+Content-Type: application/json
+
+{
+  "email": "bbekhamal26@gmail.com",
+    "password": "Bibek@7",
+      "otp":5088
+
+}
+
+
+###submit the bookings
+POST {{rootUrl}}/api/v1/booking
+Content-Type: application/json 
+
+{
+    "name": "John hamal Doe thing",
+  "email": "john@email.com",
+  "phone": "0400 111 222",
+  "guests": 2,
+  "date": "24/08/2025",
+  "time": "19:30",
+  "specialRequests": "Allergic to peanuts"
+}
