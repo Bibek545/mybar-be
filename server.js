@@ -26,6 +26,8 @@ import userRoute from './src/routes/userRoutes.js'
 import bookingRouter from "./src/routes/bookingRoutes.js"
 import { errorHandle } from './src/middleware/errorHandler.js';
 import { responseClient } from "./src/middleware/responseClient.js";
+import rewardsRoutes from './src/routes/rewardsRoutes.js'
+
 
 // const PORT = process.env.PORT || 8000
 import dotenv from "dotenv";
@@ -35,6 +37,7 @@ dotenv.config(); // load .env
 app.use("/api/v1/auth", router);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/booking", bookingRouter);
+app.use("/api/v1/rewards", rewardsRoutes);
 
 //server status
 app.get("/", (req, res) => {

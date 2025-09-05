@@ -12,8 +12,8 @@ Content-Type: application/json
     "lName": "malla",
     "email": "bbekhamal26@gmail.com",
     "phone":"1234",
-    "password": "Bibek@9",
-    "role": "customer"
+    "password": "Bibek@9"
+
 }
 
 ###activating a user
@@ -22,8 +22,8 @@ Content-Type: application/json
 
 {
 
-    "sessionId": "687ae956ac959ba506356ff6",
-    "t": "c0438c30-3cd4-450f-abe2-0f2e391b2136"
+    "sessionId": "68ad78084e6244cf3e91a518",
+    "t": "4ea7c9f6-657c-4e60-90aa-eb264652da7b"
 }
 
 ###login the user
@@ -37,12 +37,12 @@ Content-Type: application/json
 
 ###get the user profile
 GET {{rootUrl}}/api/v1/user/profile 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NTYwMjAxOSwiZXhwIjoxNzU1NjAyOTE5fQ.N1bmPZZ-GJkyZgi0L7bT4qouzOj1rhEURTjppXnDmmY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzIwMiwiZXhwIjoxNzU2ODE0MTAyfQ.8C6TNKI19xRA4T7wXAkbVtC7MRD7GMMrjemSuzTxS_I
 
 
 ###WE WILL RENEW THE JWT HERE 
 GET {{rootUrl}}/api/v1/auth/renew-jwt
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NTYwMTE1MiwiZXhwIjoxNzU4MTkzMTUyfQ.hpLDE2sNSuifgTj4jGP_Z2Dslt-eQU9_BTiH3Q6sn-Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzE2NywiZXhwIjoxNzU5NDA1MTY3fQ.viiXCERrH22NO0KuquUgQx4JQWsbsB91J90iMerSq4o
 
 ###logging out the user
 GET {{rootUrl}}/api/v1/auth/logout
@@ -74,7 +74,7 @@ POST {{rootUrl}}/api/v1/booking
 Content-Type: application/json 
 
 {
-    "name": "John hamal Doe thing",
+    "name": "John hamal Doe1  thing",
   "email": "john@email.com",
   "phone": "0400 111 222",
   "guests": 2,
@@ -82,3 +82,27 @@ Content-Type: application/json
   "time": "19:30",
   "specialRequests": "Allergic to peanuts"
 }
+
+###submit the bookings for the members
+POST {{rootUrl}}/api/v1/booking/members
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzIwMiwiZXhwIjoxNzU2ODE0MTAyfQ.8C6TNKI19xRA4T7wXAkbVtC7MRD7GMMrjemSuzTxS_I
+
+
+{
+  "guests": 2,
+  "date": "24/08/2025",
+  "time": "19:30",
+  "specialRequests": "Allergic to peanuts"
+}
+
+
+###fetching the user
+GET {{rootUrl}}/api/v1/booking/members/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzIwMiwiZXhwIjoxNzU2ODE0MTAyfQ.8C6TNKI19xRA4T7wXAkbVtC7MRD7GMMrjemSuzTxS_I
+
+
+###fetching the menu
+GET {{rootUrl}}/api/v1/menu
+
+

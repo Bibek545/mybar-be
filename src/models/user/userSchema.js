@@ -1,4 +1,15 @@
 import mongoose from "mongoose";
+const rewardHistorySchema = new mongoose.Schema(
+  {
+    type: { type: String, enum: ["earn", "redeem", "reversal"], required: true },
+    points: { type: Number, required: true },
+    dollars: { type: Number, default: 0 },
+    reason: { type: String },
+    bookingId: { type: mongoose.Schema.Types.ObjectId, ref: "Booking" },
+    createdAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
 
 const userSchema = new mongoose.Schema(
   {
@@ -40,9 +51,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-     refreshJWT: {
-        type: String,
+    refreshJWT: {
+      type: String,
     },
+    rewardPoints: { type: Number, default: 0 }, // current balance
+    rewardHistory: { type: [rewardHistorySchema], default: [] },
   },
   {
     timestamps: true,

@@ -4,7 +4,6 @@ const bookingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     phone: {
       type: String,
@@ -35,6 +34,12 @@ const bookingSchema = new mongoose.Schema(
       default: "pending",
     },
     notes: { type: String },
+    // add these fields inside your existing schema definition
+    subtotal: { type: Number, default: 0 }, // known price (optional)
+    appliedPoints: { type: Number, default: 0 }, // points used on create
+    discountAmount: { type: Number, default: 0 }, // dollars knocked off
+    totalPaid: { type: Number, default: 0 }, // what member actually paid
+    pointsCredited: { type: Boolean, default: false }, // prevent double awarding
   },
   { timestamps: true }
 );
