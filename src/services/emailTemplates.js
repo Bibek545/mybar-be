@@ -130,9 +130,28 @@ export const userProfileUpdateNotificationTemplate = ({email , name})=> {
 
 /* ---------------------- Booking emails ---------------------- */
 
+// export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => ({
+//   from: `"The Hidden Pour" <${process.env.SMTP_EMAIL}>`,
+//   to: email,
+//   subject: `We’ve received your booking request`,
+//   text: `Hi ${name}, we’ve received your booking request for ${date} at ${time} for ${guests} guests.`,
+//   html: `
+//     <p>Hi ${name},</p>
+//     <p>Thanks! We’ve received your booking request:</p>
+//     <ul>
+//       <li><strong>Date:</strong> ${date}</li>
+//       <li><strong>Time:</strong> ${time}</li>
+//       <li><strong>Guests:</strong> ${guests}</li>
+//     </ul>
+//     <p>We’ll email you as soon as it’s confirmed.</p>
+//   `,
+// });
+
+
 export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => ({
-  to: email,
-  subject: `We’ve received your booking request`,
+  from: `"The Hidden Pour" <${process.env.SMTP_EMAIL}>`,
+  to: email, // <-- must be set; we also enforce in send function
+  subject: "We’ve received your booking request",
   text: `Hi ${name}, we’ve received your booking request for ${date} at ${time} for ${guests} guests.`,
   html: `
     <p>Hi ${name},</p>
@@ -145,6 +164,7 @@ export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => 
     <p>We’ll email you as soon as it’s confirmed.</p>
   `,
 });
+
 
 // Simple ICS builder (UTC ISO strings recommended for startISO/endISO)
 export const buildICS = ({ uid, title, startISO, endISO, location, description }) => [

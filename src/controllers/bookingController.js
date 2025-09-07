@@ -10,6 +10,7 @@ import {
   sendBookingCancelled,
   sendBookingReceived,
 } from "../services/emailService.js";
+import { bookingReceivedTemplate } from "../services/emailTemplates.js";
 import {
   clampRedeemable,
   debitPoints,
@@ -19,19 +20,26 @@ import {
 
 export const createBookingController = async (req, res) => {
   try {
+    console.log("[booking] hit");
+    console.log("[booking] payload:", req.body);
+
     const {
       name,
-      email,
+      email,           // may be missing on members route
       phone,
       guests,
-      date,
+      date,            // keep as string
       time,
       allergies,
       notes,
       eventId,
     } = req.body;
 
-    if (!name || !email || !guests || !date || !time) {
+    // if members route, fall back to authenticated user email
+    const targetEmail = (email || req.user?.email || "").trim().toLowerCase();
+
+    if (!name || !targetEmail || !guests || !date || !time) {
+      console.warn("[booking] missing fields", { name, targetEmail, guests, date, time });
       return res.status(400).json({
         status: "error",
         message: "name, email, guests, date and time are required.",
@@ -40,11 +48,11 @@ export const createBookingController = async (req, res) => {
 
     const booking = await createBooking({
       name: (name || "").trim(),
-      email: (email || "").trim().toLowerCase(),
+      email: targetEmail,
       phone: (phone || "").trim(),
       guests: Number(guests),
-      date: new Date(date), // "YYYY-MM-DD" is fine
-      time, // "HH:mm" or "7:00 PM" (as you store)
+      date,                 // store the string as-is
+      time,
       allergies: (allergies || "").trim(),
       notes: (notes || "").trim(),
       eventId: eventId || undefined,
@@ -52,20 +60,18 @@ export const createBookingController = async (req, res) => {
       status: "pending",
     });
 
-    // Fire-and-forget email (don’t block the response)
-    (async () => {
-      try {
-        await sendBookingReceived({
-          email: booking.email,
-          name: booking.name,
-          date: booking.date.toISOString().slice(0, 10), // YYYY-MM-DD for email copy
-          time: booking.time,
-          guests: booking.guests,
-        });
-      } catch (e) {
-        console.error("[email booking-received] ", e.message);
-      }
-    })();
+    console.log("[booking] created:", booking._id?.toString());
+
+    // TEMP: await and hard-log so we SEE errors
+    await sendBookingReceived({
+      email: booking.email,     // guaranteed non-empty now
+      name: booking.name,
+      date: booking.date,       // plain string
+      time: booking.time,
+      guests: booking.guests,
+    });
+
+    console.log("[booking] confirmation email sent");
 
     return res.json({
       status: "success",
@@ -73,12 +79,17 @@ export const createBookingController = async (req, res) => {
       data: booking,
     });
   } catch (err) {
-    console.error(err);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Booking failed." });
+    console.error("[booking] ERROR", {
+      msg: err.message,
+      code: err.code,
+      response: err.response,
+      responseCode: err.responseCode,
+      stack: err.stack,
+    });
+    return res.status(500).json({ status: "error", message: "Booking failed." });
   }
 };
+
 
 /**
  * MEMBER: create with optional redeem
@@ -175,7 +186,7 @@ export const createMemberBookingController = async (req, res, next) => {
         await sendBookingReceived({
           email: booking.email,
           name: booking.name,
-          date: booking.date.toISOString().slice(0, 10),
+date: String(booking.date),
           time: booking.time,
           guests: booking.guests,
         });
@@ -230,9 +241,8 @@ export const cancelMyBookingController = async (req, res, next) => {
         await sendBookingCancelled({
           email: updated.email,
           name: updated.name,
-          date: updated.date?.toISOString
-            ? updated.date.toISOString().slice(0, 10)
-            : b.date, // fallback if needed
+date: String(updated.date ?? ""), // safe string
+
           time: updated.time || b.time,
         });
       } catch (e) {

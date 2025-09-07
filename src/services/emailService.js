@@ -16,7 +16,7 @@ import {
   referralSuccessTemplate,
   bookingConfirmedTemplate,
 } from "./emailTemplates.js";
-
+import nodemailer from "nodemailer";
 export const userActivationEmail = async (obj) => {
   const transport = emailTransporter();
   const info = await transport.sendMail(userActivationTemplate(obj));
@@ -49,10 +49,47 @@ export const userProfileUpdateNotificationEmail = async (obj) => {
 };
 
 // Booking lifecycle
+// export const sendBookingReceived = async (obj) => {
+//   const transport = emailTransporter();
+//   const info = await transport.sendMail(bookingReceivedTemplate(obj));
+//   return info.messageId;
+// };
+
+// export const sendBookingReceived = async (obj) => {
+//   const transport = emailTransporter();
+//   const info = await transport.sendMail(bookingReceivedTemplate(obj));
+//   console.log("[mail] id:", info.messageId);
+//   const preview = nodemailer.getTestMessageUrl(info); // Ethereal preview
+//   if (preview) console.log("[mail preview]", preview);
+//   return info.messageId;
+// };
+
 export const sendBookingReceived = async (obj) => {
   const transport = emailTransporter();
-  const info = await transport.sendMail(bookingReceivedTemplate(obj));
-  return info.messageId;
+  const mail = bookingReceivedTemplate(obj);
+
+  // safety: ensure sender & recipient exist
+  mail.from ||= `"The Hidden Pour" <${process.env.SMTP_EMAIL}>`;
+  if (!mail.to && obj?.email) mail.to = obj.email;
+
+  try {
+    console.log("[mail] sending booking-received to:", mail.to);
+    const info = await transport.sendMail(mail);
+    console.log("[mail] id:", info.messageId);
+    const preview = nodemailer.getTestMessageUrl(info);
+    if (preview) console.log("[mail preview]", preview);
+    return info.messageId;
+  } catch (e) {
+    // console.error("[mail booking-received ERROR]", {
+    //   msg: e.message,
+    //   code: e.code,
+    //   command: e.command,
+    //   response: e.response,
+    //   responseCode: e.responseCode,
+    // });
+      console.error("[mail booking-received ERROR]", e);
+    throw e;
+  }
 };
 
 export const sendBookingConfirmed = async (obj) => {

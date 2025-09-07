@@ -10,7 +10,7 @@ Content-Type: application/json
 {
     "fName": "bibek",
     "lName": "malla",
-    "email": "bbekhamal26@gmail.com",
+    "email": "bbekhamal27@gmail.com",
     "phone":"1234",
     "password": "Bibek@9"
 
@@ -96,13 +96,30 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoY
   "specialRequests": "Allergic to peanuts"
 }
 
+###cancelng the booking
+PATCH {{rootUrl}}/api/v1/booking/members/id/cancel
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzIwMiwiZXhwIjoxNzU2ODE0MTAyfQ.8C6TNKI19xRA4T7wXAkbVtC7MRD7GMMrjemSuzTxS_I
+
 
 ###fetching the user
 GET {{rootUrl}}/api/v1/booking/members/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NjgxMzIwMiwiZXhwIjoxNzU2ODE0MTAyfQ.8C6TNKI19xRA4T7wXAkbVtC7MRD7GMMrjemSuzTxS_I
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1NzAyMzQ5OCwiZXhwIjoxNzU3MDI0Mzk4fQ.ffAlhu2tbSeDJiWuh2ey9b6e5hSOgh15B5MJLl13vSo
 
 ###fetching the menu
 GET {{rootUrl}}/api/v1/menu
 
 
+###Rewards balance (member) — AUTH REQUIRED
+GET {{rootUrl}}/api/v1/rewards/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1Njg5MzU5MiwiZXhwIjoxNzU2ODk0NDkyfQ.PJkdnmBeaiWlnktvO0bNCjITZ8qFIUnWJ7Be1qvgCfU
+
+
+###Preview a redemption (member) — AUTH REQUIRED
+POST {{rootUrl}}/api/v1/rewards/preview
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZWtoYW1hbDI2QGdtYWlsLmNvbSIsImlhdCI6MTc1Njg5MzU5MiwiZXhwIjoxNzU2ODk0NDkyfQ.PJkdnmBeaiWlnktvO0bNCjITZ8qFIUnWJ7Be1qvgCfU
+
+{
+  "subtotal": 120,
+  "redeemPoints": 200
+}
