@@ -7,6 +7,7 @@ import {
 } from "../models/bookings/bookingModel.js";
 import User from "../models/user/userSchema.js";
 import {
+  sendBookingAlertToAdmin,
   sendBookingCancelled,
   sendBookingReceived,
 } from "../services/emailService.js";
@@ -104,7 +105,7 @@ export const createMemberBookingController = async (req, res, next) => {
       guests,
       allergies = "",
       notes = "",
-      subtotal = 0, // known price if applicable
+      subtotal = 0,
       redeemPoints = 0,
       eventId,
     } = req.body;
@@ -163,37 +164,54 @@ export const createMemberBookingController = async (req, res, next) => {
       // Email: rewards delta (redeemed)
       (async () => {
         try {
-          // Lookup latest balance for email
           const userFresh = await User.findById(u._id).select(
             "rewardPoints name email"
           );
           await sendRewardsDelta({
             email: userFresh.email,
             name: userFresh.name || "Member",
-            deltaPoints: -appliedPoints, // redeemed
+            deltaPoints: -appliedPoints,
             balance: userFresh.rewardPoints || 0,
             reason: "Booking redemption",
           });
         } catch (e) {
-          console.error("[email rewards-delta] ", e.message);
+          console.error("[email rewards-delta]", e.message);
         }
       })();
     }
 
-    // Email: booking received
-    (async () => {
-      try {
-        await sendBookingReceived({
-          email: booking.email,
-          name: booking.name,
-date: String(booking.date),
-          time: booking.time,
-          guests: booking.guests,
-        });
-      } catch (e) {
-        console.error("[email booking-received] ", e.message);
-      }
-    })();
+    // 📧 Debug lines
+    console.log("ADMIN_EMAIL =", process.env.ADMIN_EMAIL);
+    console.log("Has sendBookingAlertToAdmin =", typeof sendBookingAlertToAdmin);
+
+    // Send customer + admin emails together
+    const displayName =
+      booking.name || u?.name || (u?.email?.split("@")[0]) || "there";
+
+    Promise.allSettled([
+      sendBookingReceived({
+        email: booking.email,
+        name: displayName,
+        date: String(booking.date),
+        time: booking.time,
+        guests: booking.guests,
+      }),
+      sendBookingAlertToAdmin({
+        email: process.env.ADMIN_EMAIL, // set in .env
+        booking,
+      }),
+    ]).then(results => {
+      const labels = ["customer-received", "admin-alert"];
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled") {
+          console.log(`[email ${labels[i]}] sent`);
+        } else {
+          console.error(`[email ${labels[i]}] failed`, r.reason);
+        }
+      });
+    }).catch(err => {
+      console.error("[email all] unexpected error", err);
+    });
 
     return res.json({
       status: "success",
@@ -204,6 +222,8 @@ date: String(booking.date),
     next(error);
   }
 };
+
+
 
 /**
  * MEMBER: list my bookings (auth)

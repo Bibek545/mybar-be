@@ -84,70 +84,6 @@ export const userProfileUpdateNotificationTemplate = ({email , name})=> {
     }
 }
 
-/* ---------------------- Account / Auth emails ---------------------- */
-
-// export const userActivationTemplate = ({ email, name, url }) => ({
-//   to: email,
-//   subject: `Hello ${name}, activate your account`,
-//   text: `Hello ${name},\nYour account has been created. Activate it here: ${url}`,
-//   html: `
-//     <p>Hello ${name},</p>
-//     <p>Your account has been created. Click the link to activate your account:</p>
-//     <p><a href="${url}" target="_blank" rel="noopener">Activate your account</a></p>
-//   `,
-// });
-
-// export const userAccountVerifiedTemplate = ({ email, name }) => ({
-//   to: email,
-//   subject: `Your account is verified`,
-//   text: `Hello ${name}, your account is verified. You can log in now.`,
-//   html: `
-//     <p>Hello ${name},</p>
-//     <p>Your account has been created and verified. You can log in now.</p>
-//   `,
-// });
-
-// export const passwordResetOTPTemplate = ({ email, name, otp }) => ({
-//   to: email,
-//   subject: `Reset your password`,
-//   text: `Hello ${name}, here is your OTP to reset the password. It expires in 5 minutes: ${otp}.`,
-//   html: `
-//     <p>Dear ${name},</p>
-//     <p>Here is your OTP to reset the password. It expires in 5 minutes.</p>
-//     <p><strong>OTP: ${otp}</strong></p>
-//   `,
-// });
-
-// export const userProfileUpdatedTemplate = ({ email, name }) => ({
-//   to: email,
-//   subject: `Your account has been updated`,
-//   text: `Hello ${name}, your account was updated. If this wasn’t you, change your password and contact us.`,
-//   html: `
-//     <p>Dear ${name},</p>
-//     <p>Your account was updated. If this wasn’t you, please change your password and contact us.</p>
-//   `,
-// });
-
-/* ---------------------- Booking emails ---------------------- */
-
-// export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => ({
-//   from: `"The Hidden Pour" <${process.env.SMTP_EMAIL}>`,
-//   to: email,
-//   subject: `We’ve received your booking request`,
-//   text: `Hi ${name}, we’ve received your booking request for ${date} at ${time} for ${guests} guests.`,
-//   html: `
-//     <p>Hi ${name},</p>
-//     <p>Thanks! We’ve received your booking request:</p>
-//     <ul>
-//       <li><strong>Date:</strong> ${date}</li>
-//       <li><strong>Time:</strong> ${time}</li>
-//       <li><strong>Guests:</strong> ${guests}</li>
-//     </ul>
-//     <p>We’ll email you as soon as it’s confirmed.</p>
-//   `,
-// });
-
-
 export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => ({
   from: `"The Hidden Pour" <${process.env.SMTP_EMAIL}>`,
   to: email, // <-- must be set; we also enforce in send function
@@ -164,6 +100,32 @@ export const bookingReceivedTemplate = ({ email, name, date, time, guests }) => 
     <p>We’ll email you as soon as it’s confirmed.</p>
   `,
 });
+
+// ADD THIS — Admin alert template
+export const bookingAlertTemplate = (booking) => `
+  <h2>New Booking Received 🎉</h2>
+  <p>A new booking has been made via The Hidden Pour:</p>
+  <ul>
+    <li><b>Name:</b> ${booking.name}</li>
+    <li><b>Email:</b> ${booking.email}</li>
+    <li><b>Phone:</b> ${booking.phone || "-"}</li>
+    <li><b>Guests:</b> ${booking.guests}</li>
+    <li><b>Date:</b> ${new Date(booking.date).toLocaleString("en-AU", {
+      timeZone: "Australia/Sydney",
+      dateStyle: "full",
+      timeStyle: "short"
+    })}</li>
+    <li><b>Time:</b> ${booking.time}</li>
+    <li><b>Allergies:</b> ${booking.allergies || "-"}</li>
+    <li><b>Notes:</b> ${booking.notes || "-"}</li>
+  </ul>
+  <p>
+    <a href="${process.env.ROOT_URL || "#"}"
+       style="display:inline-block;padding:10px 16px;background:#D97B3F;color:#fff;border-radius:6px;text-decoration:none">
+       Open Dashboard
+    </a>
+  </p>
+`;
 
 
 // Simple ICS builder (UTC ISO strings recommended for startISO/endISO)
@@ -212,6 +174,7 @@ export const bookingConfirmedTemplate = ({ email, name, date, time, guests, star
     attachments: [{ filename: "THP-Booking.ics", content: ics, contentType: "text/calendar" }],
   };
 };
+
 
 export const bookingUpdatedTemplate = ({ email, name, oldDate, oldTime, date, time, guests }) => ({
   to: email,

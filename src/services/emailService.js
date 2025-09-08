@@ -15,6 +15,7 @@ import {
   referralInviteTemplate,
   referralSuccessTemplate,
   bookingConfirmedTemplate,
+  bookingAlertTemplate,
 } from "./emailTemplates.js";
 import nodemailer from "nodemailer";
 export const userActivationEmail = async (obj) => {
@@ -48,21 +49,6 @@ export const userProfileUpdateNotificationEmail = async (obj) => {
   return info.messageId;
 };
 
-// Booking lifecycle
-// export const sendBookingReceived = async (obj) => {
-//   const transport = emailTransporter();
-//   const info = await transport.sendMail(bookingReceivedTemplate(obj));
-//   return info.messageId;
-// };
-
-// export const sendBookingReceived = async (obj) => {
-//   const transport = emailTransporter();
-//   const info = await transport.sendMail(bookingReceivedTemplate(obj));
-//   console.log("[mail] id:", info.messageId);
-//   const preview = nodemailer.getTestMessageUrl(info); // Ethereal preview
-//   if (preview) console.log("[mail preview]", preview);
-//   return info.messageId;
-// };
 
 export const sendBookingReceived = async (obj) => {
   const transport = emailTransporter();
@@ -90,6 +76,20 @@ export const sendBookingReceived = async (obj) => {
       console.error("[mail booking-received ERROR]", e);
     throw e;
   }
+};
+
+// NEW: send admin alert
+export const sendBookingAlertToAdmin = async ({ email, booking }) => {
+  const transport = emailTransporter();
+  const info = await transport.sendMail({
+    from: `The Hidden Pour <${process.env.SMTP_EMAIL}>`,
+    to: email, // IMPORTANT: pass process.env.ADMIN_EMAIL from controller
+    subject: `🔥 New Booking – ${booking.guests} guests on ${new Date(booking.date).toLocaleDateString("en-AU")}`,
+    html: bookingAlertTemplate(booking),
+  });
+  const url = nodemailer.getTestMessageUrl(info);
+  if (url) console.log("[mail preview admin-alert]", url);
+  return info.messageId;
 };
 
 export const sendBookingConfirmed = async (obj) => {
