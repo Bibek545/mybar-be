@@ -43,8 +43,7 @@ app.use("/api/v1/rewards", rewardsRoutes);
 
 //server status
 app.get("/", (req, res) => {
-  const message = "mybar server is live";
-    responseClient({req,res,message})
+    res.success("mybar server is live")
 });
 
 
