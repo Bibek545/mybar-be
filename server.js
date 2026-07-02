@@ -19,6 +19,8 @@ app.use(morgan("dev"));
 //parse your json files
 app.use(express.json());
 
+app.use(responseClient);
+
 
 // API endpoints
 import router from './src/routes/authRoutes.js';
@@ -47,7 +49,6 @@ app.get("/", (req, res) => {
 
 
 app.use(errorHandle);
-app.use(responseClient);
 
 // connect to db first, then start server
 dbConnect()
